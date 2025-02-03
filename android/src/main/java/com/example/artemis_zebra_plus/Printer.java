@@ -30,7 +30,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.google.gson.Gson;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
@@ -47,6 +48,7 @@ import com.zebra.sdk.printer.discovery.NetworkDiscoverer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -85,7 +87,10 @@ public class Printer extends Service implements MethodChannel.MethodCallHandler 
         this.binding = binding;
         this.methodChannel = new MethodChannel(binaryMessenger, "ZebraPrinterInstance" + this.toString());
         methodChannel.setMethodCallHandler(this);
+
     }
+
+    private static final Moshi moshi = new Moshi.Builder().build();
 
     @Override
     public void onMethodCall(@NonNull final MethodCall call, @NonNull final MethodChannel.Result result) {
@@ -154,7 +159,9 @@ public class Printer extends Service implements MethodChannel.MethodCallHandler 
                         arguments.put("name", name);
                         arguments.put("type", 1);
                         arguments.put("isConnected", discoveredPrinter.getConnection().isConnected());
-                        methodChannel.invokeMethod("printerFound", new Gson().toJson(arguments));
+                        JsonAdapter<Map> adapter = moshi.adapter(Map.class);
+                        methodChannel.invokeMethod("printerFound", adapter.toJson(arguments));
+//                        methodChannel.invokeMethod("printerFound", new Gson().toJson(arguments));
                     });
                 }
 
@@ -225,7 +232,9 @@ public class Printer extends Service implements MethodChannel.MethodCallHandler 
                         arguments.put("type", 0);
                         arguments.put("isConnected", discoveredPrinter.getConnection().isConnected());
 //                        arguments.put("isConnected", discoveredPrinter);
-                        methodChannel.invokeMethod("printerFound", new Gson().toJson(arguments));
+                        JsonAdapter<Map> adapter = moshi.adapter(Map.class);
+                        methodChannel.invokeMethod("printerFound", adapter.toJson(arguments));
+//                        methodChannel.invokeMethod("printerFound", new Gson().toJson(arguments));
                     });
                 }
 
@@ -323,14 +332,14 @@ public class Printer extends Service implements MethodChannel.MethodCallHandler 
     }
 
     private void startService(final String address) {
-        Intent serviceIntent = new Intent(context, Printer.class);
-        serviceIntent.putExtra("printer_address", address);
-        context.startService(serviceIntent);
+//        Intent serviceIntent = new Intent(context, Printer.class);
+//        serviceIntent.putExtra("printer_address", address);
+//        context.startService(serviceIntent);
     }
 
     private void stopService() {
-        Intent serviceIntent = new Intent(context, Printer.class);
-        context.stopService(serviceIntent);
+//        Intent serviceIntent = new Intent(context, Printer.class);
+//        context.stopService(serviceIntent);
     }
 
     private void printData(String data, final MethodChannel.Result result) {
@@ -513,6 +522,8 @@ public class Printer extends Service implements MethodChannel.MethodCallHandler 
     }
 
     public void checkPrinterStatus(final MethodChannel.Result result) {
+//        result.success("Not Connected");
+//        return;
         tempIsPrinterConnect = true;
         if (printerConnection != null && printerConnection.isConnected()) {
             new Thread(new Runnable() {
@@ -526,7 +537,29 @@ public class Printer extends Service implements MethodChannel.MethodCallHandler 
 
                         MyPrinterStatus myPrinterStatus = new MyPrinterStatus(printerStatus.isReadyToPrint, printerStatus.isHeadOpen, printerStatus.isHeadCold, printerStatus.isHeadTooHot, printerStatus.isPaperOut, printerStatus.isRibbonOut, printerStatus.isReceiveBufferFull, printerStatus.isPaused, printerStatus.labelLengthInDots, printerStatus.numberOfFormatsInReceiveBuffer, printerStatus.labelsRemainingInBatch, printerStatus.isPartialFormatInProgress, printerStatus.printMode.ordinal());
 
-                        String jsonOutput = myPrinterStatus.toJson();
+//                        String jsonOutput = myPrinterStatus.toJson();
+
+
+
+                        HashMap<String, Object> arguments = new HashMap<>();
+                        arguments.put("isHeadCold", myPrinterStatus.isHeadCold);
+                        arguments.put("isReadyToPrint", myPrinterStatus.isReadyToPrint);
+                        arguments.put("isHeadOpen", myPrinterStatus.isHeadOpen);
+                        arguments.put("isPaperOut", myPrinterStatus.isPaperOut);
+                        arguments.put("isHeadTooHot", myPrinterStatus.isHeadTooHot);
+                        arguments.put("isPartialFormatInProgress", myPrinterStatus.isPartialFormatInProgress);
+                        arguments.put("isPaused", myPrinterStatus.isPaused);
+                        arguments.put("isReceiveBufferFull", myPrinterStatus.isReceiveBufferFull);
+                        arguments.put("isRibbonOut", myPrinterStatus.isRibbonOut);
+                        arguments.put("labelLengthInDots", myPrinterStatus.labelLengthInDots);
+                        arguments.put("numberOfFormatsInReceiveBuffer", myPrinterStatus.numberOfFormatsInReceiveBuffer);
+                        arguments.put("printMode", myPrinterStatus.printMode);
+                        arguments.put("labelsRemainingInBatch", myPrinterStatus.labelsRemainingInBatch);
+
+                        JsonAdapter<Map> adapter = moshi.adapter(Map.class);
+                        result.success(adapter.toJson(arguments));
+
+
 //                            if (jsonOutput != null) {
 //                                System.out.println("JSON Output: " + jsonOutput);
 //                            } else {
@@ -534,7 +567,7 @@ public class Printer extends Service implements MethodChannel.MethodCallHandler 
 //                            }
 
 
-                        result.success(jsonOutput);
+//                        result.success(jsonOutput);
                         if (printerStatus.isReadyToPrint) {
                             System.out.println("Ready To Print");
                         } else if (printerStatus.isPaused) {

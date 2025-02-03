@@ -209,7 +209,7 @@ class ZebraPrinter implements ArtemisZebraPrinterInterface {
 
   void broadCastStatus(Function? listener) {
     channel.invokeMethod('checkPrinterStatus').then((v){
-
+      print(v);
       try{
         final status = ZebraPrinterStatus.fromJson(jsonDecode(v));
         listener?.call(status);
@@ -217,6 +217,7 @@ class ZebraPrinter implements ArtemisZebraPrinterInterface {
           broadCastStatus(listener);
         });
       }catch(e){
+        print(e);
         Future.delayed(const Duration(seconds: 5),(){
           broadCastStatus(listener);
         });

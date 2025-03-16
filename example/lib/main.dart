@@ -122,7 +122,7 @@ class _MyAppState extends State<MyApp> {
                               if (printers.indexOf(e) != 0) {
                                 e.connectToPrinter(e.foundPrinters.last.address);
                               } else {
-                                e.connectToPrinter(e.foundPrinters.last.address);
+                                e.connectToPrinter(e.foundPrinters.first.address);
                               }
                             }
                           } else {
@@ -245,8 +245,11 @@ class _MyAppState extends State<MyApp> {
                   ],
                 ),
                 Text(status?.toString() ?? '--'),
-                Row(
-                  children: e.foundPrinters.map((e) => Text("${e.name} ${e.address}")).toList(),
+                Column(
+                  children: e.foundPrinters.map((a) => TextButton(onPressed: () {
+                    e.connectToPrinter(a.address);
+                  },
+                  child: Text("${a.name} ${a.address}"))).toList(),
                 )
               ],
             ))

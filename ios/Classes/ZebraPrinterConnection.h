@@ -14,7 +14,7 @@
 #import "ResponseValidator.h"
 
 /**
- * A connection to a Zebra printer.
+ * @abstract A connection to a Zebra printer.
  */
 @protocol ZebraPrinterConnection
 
@@ -225,7 +225,7 @@
  *          <li>Link your project to the <b>ExternalAccessory</b> framework</li>
  *          <li>Add the proper protocol string to your plist file; <b>com.zebra.rawport</b></li>
  *          <li>Set the key <b>Required Background modes</b> to <b>App Communicates with an accessory</b> in your app's plist file</li>
- *          <li>To submit an App to the App Store which uses the MFi Zebra printer, <a href="https://www.zebra.com/content/dam/zebra/product-information/en-us/brochures-datasheets/software/ios-app-whitelisting-faqs-sheet-a4-en-us.pdf">follow the instructions here</a></li>
+ *          <li>To submit an App to the App Store which uses the MFi Zebra printer, <a href="https://www.zebra.com/content/dam/zebra_dam/en/faq/ios-app-faq-whitelisting-en-us.pdf">follow the instructions here</a></li>
  *      </ul>
  *      <li>Your app must have this entitlement to send or receive IP multicast or broadcast on iOS. It also allows your app to browse and advertise arbitrary Bonjour service types. This entitlement requires permission from Apple before you can use it in your app. Please see <a href="https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_networking_multicast">this Apple Developer Documentation</a> for information about requesting the permission from Apple.</li>
  *      <ul>

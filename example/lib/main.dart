@@ -249,7 +249,7 @@ class _MyAppState extends State<MyApp> {
                   children: e.foundPrinters.map((a) => TextButton(onPressed: () {
                     e.connectToPrinter(a.address);
                   },
-                  child: Text("${a.name} ${a.address}"))).toList(),
+                      child: Text("${a.name} ${a.address}"))).toList(),
                 )
               ],
             ))
